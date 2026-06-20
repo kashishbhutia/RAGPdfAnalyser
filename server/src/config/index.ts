@@ -16,7 +16,7 @@ export const config = {
     dimensions: 768,
   },
   llm: {
-    model: 'gemini-2.5-flash',
+    model: 'gemini-2.0-flash',
     maxTokens: 1024,
     temperature: 0.2,
   },
