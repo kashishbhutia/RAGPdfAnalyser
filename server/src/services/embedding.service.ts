@@ -27,7 +27,7 @@ export class EmbeddingService {
 
   // embedding for multiple texts in batch
   async embedBatch(texts: string[]): Promise<number[][]> {
-    const batchSize = 100;
+    const batchSize = 10;
     const allEmbeddings: number[][] = [];
 
     for (let i = 0; i < texts.length; i += batchSize) {
@@ -46,7 +46,7 @@ export class EmbeddingService {
 
       // avoiding rate limit
       if (i + batchSize < texts.length) {
-        await new Promise((resolve) => setTimeout(resolve, 200));
+        await new Promise((resolve) => setTimeout(resolve, 1000));
       }
     }
 
