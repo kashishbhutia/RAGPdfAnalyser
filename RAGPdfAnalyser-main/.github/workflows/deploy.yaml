@@ -1,0 +1,59 @@
+name: RAGPdfAnalyser Deploy
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          key: ${{ secrets.SSH_KEY }}
+          script: |
+            echo "Starting Deployment..."
+
+            cd /home/azureuser/RAGPdfAnalyser
+
+            echo "Pulling latest code..."
+            git reset --hard
+            git pull origin main
+
+            echo "Setting backend environment variables..."
+            cd server
+            cat > .env <<EOF
+            NODE_ENV=${{ secrets.NODE_ENV }}
+            PORT=${{ secrets.PORT }}
+            MONGODB_URI=${{ secrets.MONGODB_URI }}
+            GEMINI_API_KEY=${{ secrets.GEMINI_API_KEY }}
+            VECTOR_STORE_PATH=${{ secrets.VECTOR_STORE_PATH }}
+            MAX_FILE_SIZE=${{ secrets.MAX_FILE_SIZE }}
+            EOF
+
+            echo "Rebuilding backend (Docker)..."
+            cd ..
+            docker-compose down
+            docker-compose up -d --build
+
+            echo "Building frontend..."
+            cd client
+            cat > .env <<EOF
+            VITE_BASE_URL=${{ secrets.VITE_BASE_URL }}
+            EOF
+
+            npm install
+            npm run build
+
+            echo "Deploying frontend to NGINX..."
+            sudo cp -r dist/* /var/www/html/
+
+            echo "Restarting NGINX..."
+            sudo systemctl restart nginx
+
+            echo "Deployment Successful!"
