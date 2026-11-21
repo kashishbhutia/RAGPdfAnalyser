@@ -40,7 +40,7 @@
 
 ```bash
 git clone https://github.com/kashishbhutia/RAGPdfAnalyser.git
-cd RagAgentSummarizer
+cd RAGPdfAnalyser
 npm run install:all
 ```
 
