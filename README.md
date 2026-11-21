@@ -39,7 +39,7 @@
 ### 1. Clone & Install
 
 ```bash
-git clone https://github.com/Sahilagarwal623/RAGPdfAnalyser.git
+git clone https://github.com/kashishbhutia/RAGPdfAnalyser.git
 cd RagAgentSummarizer
 npm run install:all
 ```
